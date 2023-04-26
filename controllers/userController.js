@@ -2,7 +2,7 @@ const db = require('../models/');
 const User = db.users;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
-const otp = 1501;
+const otp_code = 1501;
 
 const cryptPassword = async (password) => {
     const salt = await bcrypt.genSalt(10);
@@ -56,8 +56,15 @@ module.exports = {
                         })
 
                     return res.status(200).json({
-                        token
-                    })
+                        logged_in: true,
+                        bearer_token: token,
+                    })    
+
+                    // return res.status(200).json({
+                    //     logged_in: true,
+                    //     authenticated: false,
+                    //     otp_code: otp,
+                    // })
                 }
 
                 return res.status(401).json({
@@ -132,27 +139,27 @@ module.exports = {
 
     },
 
-    // otpMatch: async (req, res) => {
-    //     try {
-    //         const {
-    //             otp
-    //         } = req.body;
+    verifyOtp: async (req, res) => {
+        try {
+            const {
+                otp
+            } = req.body;
 
-    //         if (otp == otp) {
-    //             return res.status(200).json({
-    //                 message: "ok"
-    //             })
-    //         } else {
-    //             return res.status(401).json({
-    //                 message: "wrong otp"
-    //             })
-    //         }
-    //     } catch (error) {
-    //         console.log(error)
-    //         return res.status(500).json({
-    //             message: error
-    //         })
-    //     }
-    // }
+            if (otp == otp_code) {
+                return res.status(200).json({
+                    message: "otp verified!"
+                })
+            } else {
+                return res.status(401).json({
+                    message: "wrong otp"
+                })
+            }
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json({
+                message: error
+            })
+        }
+    }
 
 }
