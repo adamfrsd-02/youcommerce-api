@@ -37,4 +37,6 @@ router.get('/user/profile', checkToken, userController.getProfile);
 
 router.put('/user/update', checkToken, userController.updateProfile);
 
+router.put('/user/update_password', checkToken, userController.updatePassword);
+
 module.exports = router;

@@ -19,7 +19,10 @@ afterEach(async () => {
 });
 
 
+
+
 describe('User', () => {
+    //randomize the email and password
     it('should create a new user', async () => {
         const response = await request(apps)
             .post('/api/v1/user/register')
@@ -32,3 +35,15 @@ describe('User', () => {
         expect(response.status).toBe(200);
     });
 });
+
+// describe('User', () => {
+//     it('should login as an user', async () => {
+//         const response = await request(apps)
+//             .post('/api/v1/user/login')
+//             .send({
+//                 email: 'TestEmail@gmail.com',
+//                 password: 'TestPassword',
+//             });
+//         expect(response.status).toBe(200);
+//     });
+// });

@@ -17,20 +17,37 @@ module.exports = {
             email: req.body.email,
             password: await cryptPassword(req.body.password),
             phone: req.body.phone
-        })
+        });
+
+        const userExists = await User.findOne({
+            email: req.body.email
+        });
+
+        // if (userExists) {
+        //     return res.status(409).json({
+        //         message: "user already exists"
+        //     });
+        // };
+
 
         try {
+            if (userExists) {
+                return res.status(409).json({
+                    message: "user already exists"
+                });
+            };
+
             const user = await User.create(userData);
 
             return res.status(200).json({
                 data: user,
                 message: "ok"
-            })
+            });
         } catch (error) {
             console.log(error)
             return res.status(500).json({
                 message: error
-            })
+            });
         }
 
     },
@@ -58,7 +75,7 @@ module.exports = {
                     return res.status(200).json({
                         logged_in: true,
                         bearer_token: token,
-                    })    
+                    })
 
                     // return res.status(200).json({
                     //     logged_in: true,
@@ -68,13 +85,13 @@ module.exports = {
                 }
 
                 return res.status(401).json({
-                    message: "wrong password"
+                    message: "wrong email/password"
                 });
 
             }
 
             return res.status(404).json({
-                message: "user not found"
+                message: "wrong email/password"
             })
         } catch (error) {
             console.log(error)
@@ -109,8 +126,7 @@ module.exports = {
                 id,
                 name,
                 phone,
-                email,
-                password
+                email
             } = await req.body;
 
             User.findByIdAndUpdate(id, req.body, {
@@ -138,6 +154,44 @@ module.exports = {
 
 
     },
+
+    updatePassword: async (req, res) => {
+        try {
+            const {
+                password,
+            } = await req.body;
+
+            const id = await req.body.id;
+
+            const update = {
+                password: await cryptPassword(password)
+            }
+
+            if(!id){
+                return res.status(404).json({
+                    message: "user id not found"
+                })
+            };
+
+            User.findByIdAndUpdate(id, update, {
+                    new: true
+                })
+                .then((result) => {
+                    return res.status(200).json({
+                        message: "password successfully changed!"
+                    })
+                }).catch((err) => {
+                    console.log(err);
+                })
+
+        } catch (err) {
+            res.status(500).json({
+                message: err
+            })
+        }
+    },
+
+
 
     verifyOtp: async (req, res) => {
         try {
